@@ -6,7 +6,11 @@ latest_ip = None
 @app.route("/register", methods=["POST"])
 def register():
     global latest_ip
-    latest_ip = request.remote_addr  # or request.json["ip"] for manual
+    data = request.get_json()
+
+    # Get IP from JSON payload if present, else fallback to remote_addr
+    latest_ip = data.get("ip") if data and "ip" in data else request.remote_addr
+
     return jsonify({"status": "ok", "ip": latest_ip})
 
 @app.route("/get_ip", methods=["GET"])
